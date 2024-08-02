@@ -39,8 +39,13 @@
                 transaction_mode transaction_mode,
                 account_id_fk    long references ACCOUNT (id)
             );
+        </sql>
+    </changeSet>
 
-
+    <changeSet id="add-account-number" author="ehsan" failOnError="true">
+        <sql>
+            alter table ACCOUNT
+                add column account_number varchar(5) unique;
         </sql>
     </changeSet>
 </databaseChangeLog>

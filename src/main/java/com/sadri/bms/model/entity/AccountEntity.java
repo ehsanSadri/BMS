@@ -1,5 +1,6 @@
 package com.sadri.bms.model.entity;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +24,9 @@ public class AccountEntity {
     @Column(name = "created", columnDefinition = "timestamp")
     private LocalDateTime created;
 
+    @Column(name = "account_number", unique = true, columnDefinition = "varchar(5)")
+    private String accountNumber;
+
     @Column(name = "user_id_fk")
     private Long userId;
 
@@ -34,4 +38,10 @@ public class AccountEntity {
     @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
     private List<TransactionEntity> transactionList;
 
+
+    @PrePersist
+    @PostConstruct
+    public void formatNumber() {
+        setAccountNumber(String.format("%05d", this.id));
+    }
 }
