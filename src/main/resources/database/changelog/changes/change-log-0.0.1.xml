@@ -6,6 +6,15 @@
                       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
     <changeSet id="init-create-user" author="ehsan" failOnError="true">
         <sql>
+            create sequence USERS_SEQ
+                increment by 1;
+
+            create sequence ACCOUNT_SEQ
+                increment by 1;
+
+            create sequence TRANSACTION_SEQ
+                increment by 1;
+
             CREATE TABLE USERS
             (
                 id            long primary key,

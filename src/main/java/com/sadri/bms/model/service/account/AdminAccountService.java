@@ -30,7 +30,7 @@ public class AdminAccountService {
 
         TransactionEntity transaction = new TransactionEntity();
         transaction.setAccountId(savedAccount.getId());
-        transaction.setTitle("test");
+        transaction.setTitle("تراکنش برای حساب شماره " + account.getAccountNumber() + "در تاریخ " + LocalDateTime.now() + " به صورت افزایشی");
         transaction.setTransactionMode(TransactionMode.INCREASE);
         transaction.setAmount(model.getInitBalance());
 
@@ -38,5 +38,10 @@ public class AdminAccountService {
 
         return new AccountOut(savedAccount);
     }
+
+//    public boolean deposit(Long accountId, ) {
+//
+//    }
+
 
 }

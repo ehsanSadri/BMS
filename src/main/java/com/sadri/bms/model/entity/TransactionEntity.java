@@ -16,7 +16,8 @@ import java.math.BigDecimal;
 public class TransactionEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "TRANSACTION_SEQ")
+    @SequenceGenerator(name = "TRANSACTION_SEQ", sequenceName = "TRANSACTION_SEQ", allocationSize = 1)
     private Long id;
 
     @Column(name = "title", columnDefinition = "nvarchar(250)")

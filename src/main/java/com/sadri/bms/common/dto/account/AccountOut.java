@@ -14,7 +14,6 @@ public class AccountOut extends AccountIn {
 
     private Long id;
     private Long UserId;
-    //TODO: add this filed to ENTITY
     private String accountNumber;
     private LocalDateTime created;
 
@@ -22,6 +21,7 @@ public class AccountOut extends AccountIn {
     public AccountOut(AccountEntity entity) {
         this.id = entity.getId();
         this.UserId = entity.getUserId();
+        this.accountNumber = entity.getAccountNumber();
         this.created = entity.getCreated();
     }
 
