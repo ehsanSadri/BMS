@@ -7,10 +7,7 @@ import java.math.BigDecimal;
 
 @Getter
 @Setter
-public class TransferIn {
+public class TransactionIn {
 
     private BigDecimal amount;
-    private Long sourceAccountId;
-    private Long destinationAccountId;
-    private String sourceAccountPassword;
 }

@@ -28,6 +28,9 @@ public class AccountEntity {
     @Column(name = "account_number", unique = true, columnDefinition = "varchar(5)")
     private String accountNumber;
 
+    @Column(name = "locked", columnDefinition = "boolean not null default false", nullable = false)
+    private boolean locked;
+
     @Column(name = "user_id_fk")
     private Long userId;
 

@@ -57,5 +57,16 @@
                 add column account_number varchar(5) unique;
         </sql>
     </changeSet>
+
+    <changeSet id="admin-deposit-service" author="ehsan" failOnError="false">
+        <sql>
+            alter table ACCOUNT
+                add column locked boolean not null default false;
+
+            update ACCOUNT
+            set locked = false
+            where true
+        </sql>
+    </changeSet>
 </databaseChangeLog>
 
