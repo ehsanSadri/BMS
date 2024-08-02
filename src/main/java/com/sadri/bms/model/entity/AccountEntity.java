@@ -1,0 +1,37 @@
+package com.sadri.bms.model.entity;
+
+import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "account")
+public class AccountEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
+    @Column(name = "title", columnDefinition = "nvarchar(250)")
+    private String title;
+
+    @Column(name = "created", columnDefinition = "timestamp")
+    private LocalDateTime created;
+
+    @Column(name = "user_id_fk")
+    private Long userId;
+
+    @JoinColumn(name = "user_id_fk", updatable = false, insertable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    private UsersEntity user;
+
+    @JoinColumn(name = "account_id_fk")
+    @OneToMany(cascade = CascadeType.MERGE, fetch = FetchType.LAZY)
+    private List<TransactionEntity> transactionList;
+
+}

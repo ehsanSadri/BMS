@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd">
+    <changeSet id="init-create-user" author="ehsan" failOnError="true">
+        <sql>
+            CREATE TABLE USERS
+            (
+                id            long primary key,
+                name          NVARCHAR(250),
+                lastname      NVARCHAR(250),
+                national_code NVARCHAR(10),
+                birth_date    TIMESTAMP,
+                role          NVARCHAR(250)
+            );
+
+
+            CREATE TABLE ACCOUNT
+            (
+                id         long primary key,
+                title      NVARCHAR(250),
+                created    TIMESTAMP,
+                user_id_fk long references USERS (id)
+            );
+
+
+            alter table USERS
+                add column account_id_fk long references ACCOUNT (id);
+
+            create type transaction_mode as enum ('INCREASE', 'DECREASE');
+
+            CREATE TABLE TRANSACTION
+            (
+                id               long primary key,
+                title            NVARCHAR(250),
+                amount           numeric,
+                transaction_mode transaction_mode,
+                account_id_fk    long references ACCOUNT (id)
+            );
+
+
+        </sql>
+    </changeSet>
+</databaseChangeLog>
+
