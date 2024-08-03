@@ -1,5 +1,6 @@
 package com.sadri.bms.model.service.account;
 
+import com.sadri.bms.common.config.TokenProvider;
 import com.sadri.bms.common.dto.account.AccountIn;
 import com.sadri.bms.common.dto.account.AccountOut;
 import com.sadri.bms.common.dto.account.TransactionIn;
@@ -21,6 +22,7 @@ public class AdminAccountService {
 
     private final AccountDao dao;
     private final TransactionService transactionService;
+    private final TokenProvider tokenProvider;
 
     @Transactional
     public AccountOut create(AccountIn model, Long userId) {
@@ -28,6 +30,7 @@ public class AdminAccountService {
         account.setCreated(LocalDateTime.now());
         account.setUserId(userId);
         account.setTitle("حساب جاری نزد کاربر شماره " + userId);
+        account.setPassword(tokenProvider.getToken(model.getAccountPassword()));
         AccountEntity savedAccount = dao.save(account);
 
         transactionService.makeTransaction(savedAccount, model.getInitBalance(), TransactionMode.INCREASE);
@@ -94,8 +97,8 @@ public class AdminAccountService {
             }
 
 
-            dao.setLockById(model.getSourceAccountId(), true);
-            dao.setLockById(model.getDestinationAccountId(), true);
+            dao.setLockById(model.getSourceAccountId(), false);
+            dao.setLockById(model.getDestinationAccountId(), false);
         } else {
             System.err.println("concurrent use");
             result = false;

@@ -11,4 +11,5 @@ import java.math.BigDecimal;
 public class AccountIn {
 
     private BigDecimal initBalance;
+    private String accountPassword;
 }

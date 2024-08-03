@@ -31,6 +31,9 @@ public class AccountEntity {
     @Column(name = "locked", columnDefinition = "boolean not null default false", nullable = false)
     private boolean locked;
 
+    @Column(name = "password", columnDefinition = "mediumtext")
+    private String password;
+
     @Column(name = "user_id_fk")
     private Long userId;
 

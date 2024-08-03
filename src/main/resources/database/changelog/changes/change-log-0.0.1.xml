@@ -58,7 +58,7 @@
         </sql>
     </changeSet>
 
-    <changeSet id="admin-deposit-service" author="ehsan" failOnError="false">
+    <changeSet id="admin-deposit-service" author="ehsan" failOnError="true">
         <sql>
             alter table ACCOUNT
                 add column locked boolean not null default false;
@@ -66,6 +66,12 @@
             update ACCOUNT
             set locked = false
             where true
+        </sql>
+    </changeSet>
+
+    <changeSet id="add-password-for-accounts" author="ehsan" failOnError="true">
+        <sql>
+            alter table ACCOUNT add column password mediumtext;
         </sql>
     </changeSet>
 </databaseChangeLog>
