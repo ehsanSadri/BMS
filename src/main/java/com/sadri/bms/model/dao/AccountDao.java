@@ -7,14 +7,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
-@Repository
 public interface AccountDao extends JpaRepository<AccountEntity, Long> {
 
 
+    @Transactional(rollbackFor = Exception.class)
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @QueryHints({@QueryHint(name = "javax.persistence.lock.timeout", value = "15000")})
+    @QueryHints({@QueryHint(name = "jakarta.persistence.lock.timeout", value = "15000")})
     @Query(value = "select a from AccountEntity a where a.id = :accountId")
     AccountEntity findByIdWithLock(Long accountId);
 
