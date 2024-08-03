@@ -9,6 +9,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @RestController
 @RequestMapping("${rest.admin}")
@@ -42,12 +44,17 @@ public class AdminAccountController {
 
     @PutMapping("/account/{accountId}/withdraw")
     public ResponseEntity<Boolean> withdraw(@RequestBody TransactionIn model,
-                                            @PathVariable(name = "accountId") Long accountId) {
+                                            @PathVariable(name = "accountId") Long accountId) throws InterruptedException {
         return ResponseEntity.ok(service.withdraw(accountId, model));
     }
 
     @PutMapping("/account/transfer")
     public ResponseEntity<Boolean> transfer(@RequestBody TransferIn model) {
         return ResponseEntity.ok(service.transfer(model));
+    }
+
+    @GetMapping(path = "/account/{accountId}/balance")
+    public ResponseEntity<BigDecimal> getAccountBalance(@PathVariable(name = "accountId") Long accountId) throws Exception {
+        return ResponseEntity.ok(service.getAccountBalance(accountId));
     }
 }

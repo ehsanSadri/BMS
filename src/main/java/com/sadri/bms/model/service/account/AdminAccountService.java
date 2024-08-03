@@ -40,38 +40,23 @@ public class AdminAccountService {
     @Transactional(rollbackFor = Exception.class)
     public boolean deposit(Long accountId, TransactionIn model) {
         boolean result = true;
-        AccountEntity entity = dao.getReferenceById(accountId);
-        if (!entity.isLocked()) {
-            dao.setLockById(accountId, true);
-            transactionService.makeTransaction(entity, model, TransactionMode.INCREASE);
-            dao.setLockById(accountId, false);
-        } else {
-            System.err.println("account is locked");
-            result = false;
-        }
+        AccountEntity entity = dao.findByIdWithLock(accountId);
+        transactionService.makeTransaction(entity, model, TransactionMode.INCREASE);
+
         return result;
     }
 
-    @Transactional
-    public boolean withdraw(Long accountId, TransactionIn model) {
+    @Transactional(rollbackFor = Exception.class)
+    public boolean withdraw(Long accountId, TransactionIn model) throws InterruptedException {
         boolean result = true;
-        AccountEntity entity = dao.getReferenceById(accountId);
-        if (!entity.isLocked()) {
-            dao.setLockById(accountId, true);
-            BigDecimal accountBalance = transactionService.getBalanceByAccountId(accountId);
+        AccountEntity entity = dao.findByIdWithLock(accountId);
 
-            if (accountBalance.compareTo(model.getAmount()) >= 0) {
-                transactionService.makeTransaction(entity, model, TransactionMode.DECREASE);
-            } else {
-                //TODO: throw standard error here.
-                System.err.println("out of balance");
-                result = false;
-            }
-
-            dao.setLockById(accountId, false);
+        BigDecimal accountBalance = transactionService.getBalanceByAccountId(accountId);
+        if (accountBalance.compareTo(model.getAmount()) >= 0) {
+            transactionService.makeTransaction(entity, model, TransactionMode.DECREASE);
         } else {
             //TODO: throw standard error here.
-            System.err.println("account is locked");
+            System.err.println("out of balance");
             result = false;
         }
         return result;
@@ -80,31 +65,23 @@ public class AdminAccountService {
     @Transactional(rollbackFor = Exception.class)
     public boolean transfer(TransferIn model) {
         boolean result = true;
-        AccountEntity sourceEntity = dao.getReferenceById(model.getSourceAccountId());
-        AccountEntity destinationEntity = dao.getReferenceById(model.getDestinationAccountId());
+        AccountEntity sourceEntity = dao.findByIdWithLock(model.getSourceAccountId());
+        AccountEntity destinationEntity = dao.findByIdWithLock(model.getDestinationAccountId());
 
-        if (!sourceEntity.isLocked() && !destinationEntity.isLocked()) {
-            dao.setLockById(model.getSourceAccountId(), true);
-            dao.setLockById(model.getDestinationAccountId(), true);
-            BigDecimal sourceAccountBalance = transactionService.getBalanceByAccountId(model.getSourceAccountId());
+        BigDecimal sourceAccountBalance = transactionService.getBalanceByAccountId(model.getSourceAccountId());
 
-            if (sourceAccountBalance.compareTo(model.getAmount()) >= 0) {
-                transactionService.makeTransaction(sourceEntity, model.getAmount(), TransactionMode.DECREASE);
-                transactionService.makeTransaction(destinationEntity, model.getAmount(), TransactionMode.INCREASE);
-            } else {
-                System.err.println("out of balance");
-                result = false;
-            }
-
-
-            dao.setLockById(model.getSourceAccountId(), false);
-            dao.setLockById(model.getDestinationAccountId(), false);
+        if (sourceAccountBalance.compareTo(model.getAmount()) >= 0) {
+            transactionService.makeTransaction(sourceEntity, model.getAmount(), TransactionMode.DECREASE);
+            transactionService.makeTransaction(destinationEntity, model.getAmount(), TransactionMode.INCREASE);
         } else {
-            System.err.println("concurrent use");
+            System.err.println("out of balance");
             result = false;
         }
-
         return result;
+    }
+
+    public BigDecimal getAccountBalance(Long accountId) {
+        return transactionService.getBalanceByAccountId(accountId);
     }
 
 
