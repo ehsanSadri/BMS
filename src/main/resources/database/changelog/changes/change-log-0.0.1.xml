@@ -63,5 +63,11 @@
             alter table ACCOUNT add column password mediumtext;
         </sql>
     </changeSet>
+
+    <changeSet id="observer-and-transactions" author="ehsan" failOnError="true">
+        <sql>
+            alter table TRANSACTION add column created timestamp;
+        </sql>
+    </changeSet>
 </databaseChangeLog>
 

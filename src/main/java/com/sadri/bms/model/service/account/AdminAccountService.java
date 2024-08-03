@@ -8,6 +8,7 @@ import com.sadri.bms.common.dto.account.TransferIn;
 import com.sadri.bms.model.dao.AccountDao;
 import com.sadri.bms.model.entity.AccountEntity;
 import com.sadri.bms.model.entity.enums.TransactionMode;
+import com.sadri.bms.model.entity.enums.TransactionType;
 import com.sadri.bms.model.service.ExecutorCallerService;
 import com.sadri.bms.model.service.transaction.TransactionService;
 import lombok.AllArgsConstructor;
@@ -38,7 +39,7 @@ public class AdminAccountService {
             account.setPassword(tokenProvider.getToken(model.getAccountPassword()));
             AccountEntity savedAccount = dao.save(account);
 
-            transactionService.makeTransaction(savedAccount, model.getInitBalance(), TransactionMode.INCREASE);
+            transactionService.makeTransaction(savedAccount, model.getInitBalance(), TransactionMode.INCREASE, TransactionType.INITIAL);
             return new AccountOut(savedAccount);
         };
         return executorCallerService.execute(createCallable).get();
@@ -48,7 +49,7 @@ public class AdminAccountService {
     public boolean deposit(Long accountId, TransactionIn model) throws ExecutionException, InterruptedException {
         Callable<Boolean> deposit = () -> {
             AccountEntity entity = dao.findByIdWithLock(accountId);
-            transactionService.makeTransaction(entity, model, TransactionMode.INCREASE);
+            transactionService.makeTransaction(entity, model, TransactionMode.INCREASE, TransactionType.DEPOSIT);
             return Boolean.TRUE;
         };
         return executorCallerService.execute(deposit).get();
@@ -61,7 +62,7 @@ public class AdminAccountService {
 
             BigDecimal accountBalance = transactionService.getBalanceByAccountId(accountId);
             if (accountBalance.compareTo(model.getAmount()) >= 0) {
-                transactionService.makeTransaction(entity, model, TransactionMode.DECREASE);
+                transactionService.makeTransaction(entity, model, TransactionMode.DECREASE, TransactionType.WITHDRAW);
             } else {
                 System.err.println("out of balance");
                 return Boolean.FALSE;
@@ -81,8 +82,8 @@ public class AdminAccountService {
             BigDecimal sourceAccountBalance = transactionService.getBalanceByAccountId(model.getSourceAccountId());
 
             if (sourceAccountBalance.compareTo(model.getAmount()) >= 0) {
-                transactionService.makeTransaction(sourceEntity, model.getAmount(), TransactionMode.DECREASE);
-                transactionService.makeTransaction(destinationEntity, model.getAmount(), TransactionMode.INCREASE);
+                transactionService.makeTransaction(sourceEntity, model.getAmount(), TransactionMode.DECREASE, TransactionType.TRANSFER);
+                transactionService.makeTransaction(destinationEntity, model.getAmount(), TransactionMode.INCREASE, TransactionType.TRANSFER);
             } else {
                 System.err.println("out of balance");
                 return Boolean.FALSE;

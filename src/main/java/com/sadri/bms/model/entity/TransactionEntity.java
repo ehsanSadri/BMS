@@ -8,6 +8,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -37,4 +38,7 @@ public class TransactionEntity {
     @JoinColumn(name = "account_id_fk", insertable = false, updatable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private AccountEntity account;
+
+    @Column(name = "created", columnDefinition = "timestamp")
+    private LocalDateTime created;
 }
