@@ -3,6 +3,8 @@ package com.sadri.bms.controller.account;
 import com.sadri.bms.common.dto.PageableFilter;
 import com.sadri.bms.common.dto.account.*;
 import com.sadri.bms.model.service.account.AccountService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
+@Tag(name = "Account Controller")
 @Validated
 @AllArgsConstructor
 @RestController
@@ -21,6 +24,7 @@ public class AccountController {
 
     private final AccountService service;
 
+    @Operation(summary = "get all Accounts")
     @GetMapping(path = "/account")
     public ResponseEntity<List<AccountOut>> getAll(@Valid PageableFilter filter) {
         return ResponseEntity.ok(service.getAll(filter));
