@@ -1,10 +1,8 @@
 package com.sadri.bms.model.service.account;
 
 import com.sadri.bms.common.config.TokenProvider;
-import com.sadri.bms.common.dto.account.AccountIn;
-import com.sadri.bms.common.dto.account.AccountOut;
-import com.sadri.bms.common.dto.account.TransactionIn;
-import com.sadri.bms.common.dto.account.TransferIn;
+import com.sadri.bms.common.dto.PageableFilter;
+import com.sadri.bms.common.dto.account.*;
 import com.sadri.bms.model.dao.AccountDao;
 import com.sadri.bms.model.entity.AccountEntity;
 import com.sadri.bms.model.entity.enums.TransactionMode;
@@ -12,22 +10,30 @@ import com.sadri.bms.model.entity.enums.TransactionType;
 import com.sadri.bms.model.service.ExecutorCallerService;
 import com.sadri.bms.model.service.transaction.TransactionService;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
-public class AdminAccountService {
+public class AccountService {
 
     private final AccountDao dao;
     private final TransactionService transactionService;
     private final TokenProvider tokenProvider;
     private final ExecutorCallerService executorCallerService;
+
+    public AccountOut getByUserId(Long userId) {
+        return new AccountOut(dao.getByUserId(userId));
+    }
 
     @Transactional
     public AccountOut create(AccountIn model, Long userId) throws ExecutionException, InterruptedException {
@@ -99,5 +105,14 @@ public class AdminAccountService {
         return executorCallerService.execute(balanceCallable).get();
     }
 
+    public List<AccountOut> getAll(PageableFilter filter) {
+        Pageable pageable = PageRequest.of(filter.getPage() - 1, filter.getSize());
+        return dao.findAll(pageable).stream().map(AccountOut::new).collect(Collectors.toList());
+    }
+
+
+    public List<TransactionOut> getTransactionReport(PageableFilter filter, Long accountId) {
+        return transactionService.getAllByAccountId(filter, accountId);
+    }
 
 }

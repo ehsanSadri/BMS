@@ -1,8 +1,9 @@
-package com.sadri.bms.controller.user.admin;
+package com.sadri.bms.controller.user;
 
+import com.sadri.bms.common.dto.PageableFilter;
 import com.sadri.bms.common.dto.user.UserIn;
 import com.sadri.bms.common.dto.user.UserOut;
-import com.sadri.bms.model.service.user.AdminUserService;
+import com.sadri.bms.model.service.user.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +16,9 @@ import java.util.List;
 @AllArgsConstructor
 @RestController
 @RequestMapping(path = "${rest.admin}")
-public class AdminUserController {
+public class UserController {
 
-    private final AdminUserService service;
+    private final UserService service;
 
     @GetMapping(path = "/user/{userId}")
     public ResponseEntity<UserOut> getById(@PathVariable(name = "userId") Long userId) {
@@ -25,8 +26,8 @@ public class AdminUserController {
     }
 
     @GetMapping(path = "/user")
-    public List<UserOut> getAll() {
-        return null;
+    public ResponseEntity<List<UserOut>> getAll(@Valid PageableFilter filter) {
+        return ResponseEntity.ok(service.getAll(filter));
     }
 
     @PostMapping(path = "/user/{role}")

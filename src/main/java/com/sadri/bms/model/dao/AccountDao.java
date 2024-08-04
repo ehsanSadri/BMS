@@ -18,4 +18,6 @@ public interface AccountDao extends JpaRepository<AccountEntity, Long> {
     @Query(value = "select a from AccountEntity a where a.id = :accountId")
     AccountEntity findByIdWithLock(Long accountId);
 
+    AccountEntity getByUserId(Long userId);
+
 }

@@ -18,7 +18,6 @@ public class LoggerService implements Observer {
     @Override
     public void update(Object message) {
         if (message instanceof TransactionMessageDto transactionMessage) {
-            transactionMessage.getAmount();
             try {
                 if (writer != null) {
                     writer.write(

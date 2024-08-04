@@ -1,10 +1,8 @@
-package com.sadri.bms.controller.account.admin;
+package com.sadri.bms.controller.account;
 
-import com.sadri.bms.common.dto.account.AccountIn;
-import com.sadri.bms.common.dto.account.AccountOut;
-import com.sadri.bms.common.dto.account.TransactionIn;
-import com.sadri.bms.common.dto.account.TransferIn;
-import com.sadri.bms.model.service.account.AdminAccountService;
+import com.sadri.bms.common.dto.PageableFilter;
+import com.sadri.bms.common.dto.account.*;
+import com.sadri.bms.model.service.account.AccountService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,26 +10,25 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Validated
 @AllArgsConstructor
 @RestController
 @RequestMapping("${rest.admin}")
-public class AdminAccountController {
+public class AccountController {
 
-    private final AdminAccountService service;
+    private final AccountService service;
 
     @GetMapping(path = "/account")
-    public AccountOut getAll() {
-
-        return null;
+    public ResponseEntity<List<AccountOut>> getAll(@Valid PageableFilter filter) {
+        return ResponseEntity.ok(service.getAll(filter));
     }
 
     @GetMapping(path = "/account/user/{userId}")
-    public AccountOut getByUserId(@PathVariable(name = "userId") Long userId) {
-
-        return null;
+    public ResponseEntity<AccountOut> getByUserId(@PathVariable(name = "userId") Long userId) {
+        return ResponseEntity.ok(service.getByUserId(userId));
     }
 
     @PostMapping(path = "/account/user/{userId}")
@@ -60,5 +57,11 @@ public class AdminAccountController {
     @GetMapping(path = "/account/{accountId}/balance")
     public ResponseEntity<BigDecimal> getAccountBalance(@PathVariable(name = "accountId") Long accountId) throws ExecutionException, InterruptedException {
         return ResponseEntity.ok(service.getAccountBalance(accountId));
+    }
+
+    @GetMapping(path = "/account/{accountId}/transaction-report")
+    public ResponseEntity<List<TransactionOut>> getAccountTransactionReport(@PathVariable(name = "accountId") Long accountId,
+                                                                            @Valid PageableFilter filter) {
+        return ResponseEntity.ok(service.getTransactionReport(filter, accountId));
     }
 }
