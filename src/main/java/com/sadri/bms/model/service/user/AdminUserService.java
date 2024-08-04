@@ -19,4 +19,8 @@ public class AdminUserService {
         return new UserOut(userDao.save(entity));
     }
 
+    public UserOut getById(Long id) {
+        return new UserOut(userDao.getUsersEntityById(id));
+    }
+
 }

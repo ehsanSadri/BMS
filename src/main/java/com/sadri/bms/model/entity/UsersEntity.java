@@ -36,7 +36,7 @@ public class UsersEntity {
     private Long accountId;
 
     @JoinColumn(name = "account_id_fk", updatable = false, insertable = false)
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "user", fetch = FetchType.EAGER)
     private AccountEntity account;
 
 }

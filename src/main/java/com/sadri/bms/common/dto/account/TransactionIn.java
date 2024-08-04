@@ -1,5 +1,6 @@
 package com.sadri.bms.common.dto.account;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,5 +14,6 @@ import java.math.BigDecimal;
 @Setter
 public class TransactionIn {
 
+    @NotNull
     private BigDecimal amount;
 }

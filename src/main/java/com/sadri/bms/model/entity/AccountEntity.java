@@ -34,7 +34,7 @@ public class AccountEntity {
     @Column(name = "user_id_fk")
     private Long userId;
 
-    @JoinColumn(name = "user_id_fk", updatable = false, insertable = false)
+    @JoinColumn(referencedColumnName = "id", name = "user_id_fk", updatable = false, insertable = false)
     @OneToOne(fetch = FetchType.LAZY)
     private UsersEntity user;
 
